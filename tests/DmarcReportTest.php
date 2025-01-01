@@ -29,8 +29,8 @@ it('can parse xml file', function () {
 
     expect($report->date_range)
         ->toBeInstanceOf(DateRange::class)
-        ->begin->toEqual(new DateTimeImmutable('2024-11-25 1:00:00'))
-        ->end->toEqual(new DateTimeImmutable('2024-11-26 1:00:00'));
+        ->begin->toEqual(new DateTimeImmutable('2024-11-25 0:00:00', new DateTimeZone('UTC')))
+        ->end->toEqual(new DateTimeImmutable('2024-11-26 0:00:00', new DateTimeZone('UTC')));
 
     expect($report->publishedPolicy)
         ->toBeInstanceOf(Policy::class)

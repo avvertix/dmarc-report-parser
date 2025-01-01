@@ -14,11 +14,11 @@ it('create from array', function () {
 
     expect($range->begin)
         ->toBeInstanceOf(DateTimeImmutable::class)
-        ->toEqual(new DateTimeImmutable('2024-11-25 1:00:00'));
+        ->toEqual(new DateTimeImmutable('2024-11-25 0:00:00', new DateTimeZone('UTC')));
 
     expect($range->end)
         ->toBeInstanceOf(DateTimeImmutable::class)
-        ->toEqual(new DateTimeImmutable('2024-11-26 1:00:00'));
+        ->toEqual(new DateTimeImmutable('2024-11-26 0:00:00', new DateTimeZone('UTC')));
 });
 
 it('check for missing end', function () {

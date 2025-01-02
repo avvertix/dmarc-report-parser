@@ -14,5 +14,4 @@ final class UnsupportedFormatException extends RuntimeException
     {
         parent::__construct("Unsupported format [{$mimeType}] for file [{$fileName}]. Expecting xml, zip, gzip.", 500, $previous);
     }
-    
 }

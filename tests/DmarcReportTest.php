@@ -48,7 +48,6 @@ it('can parse xml file', function () {
         ->toContainOnlyInstancesOf(Record::class);
 });
 
-
 it('can parse zip file', function () {
 
     $dmarc = new DmarcReportParser;
@@ -333,4 +332,4 @@ it('refuse to parse a txt file', function () {
 
     $dmarc->fromFile('./tests/fixtures/plain.txt');
 
-})->throws(UnsupportedFormatException::class, "Unsupported format [text/plain] for file [plain.txt]. Expecting xml, zip, gzip.");
+})->throws(UnsupportedFormatException::class, 'Unsupported format [text/plain] for file [plain.txt]. Expecting xml, zip, gzip.');

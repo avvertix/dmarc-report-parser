@@ -15,10 +15,9 @@ use ZipArchive;
 
 final class DmarcReportParser
 {
-
     /**
      * Supported mime types for file reading
-     * 
+     *
      * @var array
      */
     private const SUPPORTED_MIME_TYPES = [
@@ -27,40 +26,39 @@ final class DmarcReportParser
         'application/zip',
     ];
 
-
     /**
      * Parse a DMARC report from file.
      * File must be readable in xml format or compressed archives (zip, gz) containing only one xml file
      */
     public function fromFile(string $path): DmarcReport
     {
-        $mimeTypes = new MimeTypes();
+        $mimeTypes = new MimeTypes;
         $mimeType = $mimeTypes->guessMimeType($path);
 
-        if(!in_array($mimeType, self::SUPPORTED_MIME_TYPES)){
+        if (! in_array($mimeType, self::SUPPORTED_MIME_TYPES)) {
             throw new UnsupportedFormatException($mimeType, basename($path));
-        };
+        }
 
-        if($mimeType === 'application/zip'){
+        if ($mimeType === 'application/zip') {
             $zip = new ZipArchive;
-            if ($zip->open($path) === TRUE) {
+            if ($zip->open($path) === true) {
                 $content = $zip->getFromIndex(0);
                 $zip->close();
 
                 return $this->fromString($content);
             }
-            throw new RuntimeException("Error reading zip file", 1);
+            throw new RuntimeException('Error reading zip file', 1);
         }
-        
-        if($mimeType === 'application/gzip'){
+
+        if ($mimeType === 'application/gzip') {
 
             ob_start();
             $bytes = readgzfile($path);
             $content = ob_get_contents();
             ob_end_clean();
 
-            if($bytes === false){
-                throw new RuntimeException("Error reading gzip file", 1);
+            if ($bytes === false) {
+                throw new RuntimeException('Error reading gzip file', 1);
             }
 
             return $this->fromString($content);

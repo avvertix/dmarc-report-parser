@@ -5,12 +5,137 @@ use Avvertix\DmarcReportParser\Data\DmarcReport;
 use Avvertix\DmarcReportParser\Data\Policy;
 use Avvertix\DmarcReportParser\Data\Record;
 use Avvertix\DmarcReportParser\DmarcReportParser;
+use Avvertix\DmarcReportParser\Exception\UnsupportedFormatException;
 
 it('can parse xml file', function () {
 
     $dmarc = new DmarcReportParser;
 
     $report = $dmarc->fromFile('./tests/fixtures/dmarc.xml');
+
+    expect($report)
+        ->toBeInstanceOf(DmarcReport::class);
+
+    expect($report->version)
+        ->toEqual('1.0');
+
+    expect($report->org_name)
+        ->toEqual('Enterprise Outlook');
+
+    expect($report->email)
+        ->toEqual('dmarcreport@microsoft.com');
+
+    expect($report->report_id)
+        ->toEqual('17265e8a413a4989bc4eef2c46ef08d0');
+
+    expect($report->date_range)
+        ->toBeInstanceOf(DateRange::class)
+        ->begin->toEqual(new DateTimeImmutable('2024-11-25 0:00:00', new DateTimeZone('UTC')))
+        ->end->toEqual(new DateTimeImmutable('2024-11-26 0:00:00', new DateTimeZone('UTC')));
+
+    expect($report->publishedPolicy)
+        ->toBeInstanceOf(Policy::class)
+        ->domain->toEqual('a-domain.localhost');
+
+    expect($report->extra_contact_info)
+        ->toBeEmpty();
+
+    expect($report->error)
+        ->toBeEmpty();
+
+    expect($report->records)
+        ->toHaveCount(2)
+        ->toContainOnlyInstancesOf(Record::class);
+});
+
+
+it('can parse zip file', function () {
+
+    $dmarc = new DmarcReportParser;
+
+    $report = $dmarc->fromFile('./tests/fixtures/dmarc.zip');
+
+    expect($report)
+        ->toBeInstanceOf(DmarcReport::class);
+
+    expect($report->version)
+        ->toEqual('1.0');
+
+    expect($report->org_name)
+        ->toEqual('Enterprise Outlook');
+
+    expect($report->email)
+        ->toEqual('dmarcreport@microsoft.com');
+
+    expect($report->report_id)
+        ->toEqual('17265e8a413a4989bc4eef2c46ef08d0');
+
+    expect($report->date_range)
+        ->toBeInstanceOf(DateRange::class)
+        ->begin->toEqual(new DateTimeImmutable('2024-11-25 0:00:00', new DateTimeZone('UTC')))
+        ->end->toEqual(new DateTimeImmutable('2024-11-26 0:00:00', new DateTimeZone('UTC')));
+
+    expect($report->publishedPolicy)
+        ->toBeInstanceOf(Policy::class)
+        ->domain->toEqual('a-domain.localhost');
+
+    expect($report->extra_contact_info)
+        ->toBeEmpty();
+
+    expect($report->error)
+        ->toBeEmpty();
+
+    expect($report->records)
+        ->toHaveCount(2)
+        ->toContainOnlyInstancesOf(Record::class);
+});
+
+it('can parse gzip file', function () {
+
+    $dmarc = new DmarcReportParser;
+
+    $report = $dmarc->fromFile('./tests/fixtures/dmarc.xml.gz');
+
+    expect($report)
+        ->toBeInstanceOf(DmarcReport::class);
+
+    expect($report->version)
+        ->toEqual('1.0');
+
+    expect($report->org_name)
+        ->toEqual('Enterprise Outlook');
+
+    expect($report->email)
+        ->toEqual('dmarcreport@microsoft.com');
+
+    expect($report->report_id)
+        ->toEqual('17265e8a413a4989bc4eef2c46ef08d0');
+
+    expect($report->date_range)
+        ->toBeInstanceOf(DateRange::class)
+        ->begin->toEqual(new DateTimeImmutable('2024-11-25 0:00:00', new DateTimeZone('UTC')))
+        ->end->toEqual(new DateTimeImmutable('2024-11-26 0:00:00', new DateTimeZone('UTC')));
+
+    expect($report->publishedPolicy)
+        ->toBeInstanceOf(Policy::class)
+        ->domain->toEqual('a-domain.localhost');
+
+    expect($report->extra_contact_info)
+        ->toBeEmpty();
+
+    expect($report->error)
+        ->toBeEmpty();
+
+    expect($report->records)
+        ->toHaveCount(2)
+        ->toContainOnlyInstancesOf(Record::class);
+});
+
+it('can parse a xml file with txt extension', function () {
+
+    $dmarc = new DmarcReportParser;
+
+    $report = $dmarc->fromFile('./tests/fixtures/dmarc-as-txt.txt');
 
     expect($report)
         ->toBeInstanceOf(DmarcReport::class);
@@ -201,3 +326,11 @@ it('checks version', function () {
     $dmarc->fromString($xml);
 
 })->throws(InvalidArgumentException::class, 'Unexpected version identifier found. Expected 1.0, found [2.0]');
+
+it('refuse to parse a txt file', function () {
+
+    $dmarc = new DmarcReportParser;
+
+    $dmarc->fromFile('./tests/fixtures/plain.txt');
+
+})->throws(UnsupportedFormatException::class, "Unsupported format [text/plain] for file [plain.txt]. Expecting xml, zip, gzip.");

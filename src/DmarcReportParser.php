@@ -6,21 +6,75 @@ use Avvertix\DmarcReportParser\Data\DateRange;
 use Avvertix\DmarcReportParser\Data\DmarcReport;
 use Avvertix\DmarcReportParser\Data\Policy;
 use Avvertix\DmarcReportParser\Data\Record;
+use Avvertix\DmarcReportParser\Exception\UnsupportedFormatException;
 use InvalidArgumentException;
+use RuntimeException;
 use Saloon\XmlWrangler\XmlReader;
+use Symfony\Component\Mime\MimeTypes;
+use ZipArchive;
 
 final class DmarcReportParser
 {
+
     /**
-     * Parse a DMARC xml report from file
+     * Supported mime types for file reading
+     * 
+     * @var array
+     */
+    private const SUPPORTED_MIME_TYPES = [
+        'text/xml',
+        'application/gzip',
+        'application/zip',
+    ];
+
+
+    /**
+     * Parse a DMARC report from file.
+     * File must be readable in xml format or compressed archives (zip, gz) containing only one xml file
      */
     public function fromFile(string $path): DmarcReport
     {
+        $mimeTypes = new MimeTypes();
+        $mimeType = $mimeTypes->guessMimeType($path);
+
+        if(!in_array($mimeType, self::SUPPORTED_MIME_TYPES)){
+            throw new UnsupportedFormatException($mimeType, basename($path));
+        };
+
+        if($mimeType === 'application/zip'){
+            $zip = new ZipArchive;
+            if ($zip->open($path) === TRUE) {
+                $content = $zip->getFromIndex(0);
+                $zip->close();
+
+                return $this->fromString($content);
+            }
+            throw new RuntimeException("Error reading zip file", 1);
+        }
+        
+        if($mimeType === 'application/gzip'){
+
+            ob_start();
+            $bytes = readgzfile($path);
+            $content = ob_get_contents();
+            ob_end_clean();
+
+            if($bytes === false){
+                throw new RuntimeException("Error reading gzip file", 1);
+            }
+
+            return $this->fromString($content);
+
+        }
+
         $reader = XmlReader::fromFile($path);
 
         return $this->parseXmlReport($reader);
     }
 
+    /**
+     * Parse a DMARC report from a XML string representing the report content
+     */
     public function fromString(string $xml): DmarcReport
     {
         $reader = XmlReader::fromString($xml);

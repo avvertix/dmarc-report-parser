@@ -28,7 +28,7 @@ final class PolicyEvaluated
     {
         $reasons = $policy['reason'] ?? [];
 
-        if($reasons['type'] ?? false){
+        if ($reasons['type'] ?? false) {
             $reasons = [$reasons];
         }
 

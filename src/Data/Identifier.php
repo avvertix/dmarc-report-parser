@@ -12,7 +12,7 @@ final class Identifier
         /**
          * The RFC5321.MailFrom domain.
          */
-        public readonly string $envelope_from,
+        public readonly ?string $envelope_from,
 
         /**
          * The RFC5322.From domain.
@@ -29,8 +29,8 @@ final class Identifier
     public static function fromArray(array $identifiers): self
     {
         return new self(
-            envelope_from: $identifiers['envelope_from'],
             header_from: $identifiers['header_from'],
+            envelope_from: $identifiers['envelope_from'] ?? null,
             envelope_to: $identifiers['envelope_to'] ?? null,
         );
     }

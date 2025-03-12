@@ -33,7 +33,7 @@ final class Policy
         /**
          * The policy to apply to messages from subdomains.
          */
-        public readonly DispositionType $sp,
+        public readonly ?DispositionType $sp,
 
         /**
          * The percent of messages to which policy applies.
@@ -43,7 +43,7 @@ final class Policy
         /**
          * Failure reporting options in effect.
          */
-        public readonly string $fo,
+        public readonly ?string $fo,
     ) {}
 
     public static function fromArray(array $policy): self
@@ -51,9 +51,9 @@ final class Policy
         return new self(
             domain: $policy['domain'],
             p: DispositionType::from($policy['p']),
-            sp: DispositionType::from($policy['sp']),
             pct: intval($policy['pct'], 10),
-            fo: $policy['fo'],
+            fo: $policy['fo'] ?? null,
+            sp: is_null($policy['sp'] ?? null) ? null : DispositionType::from($policy['sp']),
             adkim: is_null($policy['adkim'] ?? null) ? null : AlignmentMode::from($policy['adkim']),
             aspf: is_null($policy['aspf'] ?? null) ? null : AlignmentMode::from($policy['aspf']),
         );

@@ -82,7 +82,7 @@ final class DmarcReportParser
 
     private function parseXmlReport(XmlReader $reader): DmarcReport
     {
-        $version = $reader->value('feedback.version')->sole();
+        $version = $reader->value('feedback.version')->first() ?? '1.0'; // assuming version 1.0 if not specified
 
         if (version_compare($version, '1.0', '!=')) {
             throw new InvalidArgumentException("Unexpected version identifier found. Expected 1.0, found [{$version}]");

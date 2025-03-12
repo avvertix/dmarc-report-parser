@@ -48,6 +48,47 @@ it('can parse xml file', function () {
         ->toContainOnlyInstancesOf(Record::class);
 });
 
+it('can parse xml file with missing elements', function () {
+
+    $dmarc = new DmarcReportParser;
+
+    $report = $dmarc->fromFile('./tests/fixtures/dmarc-missing-elements.xml');
+
+    expect($report)
+        ->toBeInstanceOf(DmarcReport::class);
+
+    expect($report->version)
+        ->toEqual('1.0');
+
+    expect($report->org_name)
+        ->toEqual('Yahoo');
+
+    expect($report->email)
+        ->toEqual('dmarchelp@yahooinc.com');
+
+    expect($report->report_id)
+        ->toEqual('1735694883.674529');
+
+    expect($report->date_range)
+        ->toBeInstanceOf(DateRange::class)
+        ->begin->toEqual(new DateTimeImmutable('2024-12-31 0:00:00', new DateTimeZone('UTC')))
+        ->end->toEqual(new DateTimeImmutable('2024-12-31 23:59:59', new DateTimeZone('UTC')));
+
+    expect($report->publishedPolicy)
+        ->toBeInstanceOf(Policy::class)
+        ->domain->toEqual('a-domain.localhost');
+
+    expect($report->extra_contact_info)
+        ->toBeEmpty();
+
+    expect($report->error)
+        ->toBeEmpty();
+
+    expect($report->records)
+        ->toHaveCount(1)
+        ->toContainOnlyInstancesOf(Record::class);
+});
+
 it('can parse zip file', function () {
 
     $dmarc = new DmarcReportParser;

@@ -38,7 +38,7 @@ final class Policy
         /**
          * The percent of messages to which policy applies.
          */
-        public readonly int $pct,
+        public readonly ?int $pct,
 
         /**
          * Failure reporting options in effect.
@@ -51,9 +51,9 @@ final class Policy
         return new self(
             domain: $policy['domain'],
             p: DispositionType::from($policy['p']),
-            pct: intval($policy['pct'], 10),
             fo: $policy['fo'] ?? null,
-            sp: is_null($policy['sp'] ?? null) ? null : DispositionType::from($policy['sp']),
+            pct: is_null($policy['pct'] ?? null) ? null : intval($policy['pct'], 10),
+            sp: empty($policy['sp'] ?? null) ? null : DispositionType::from($policy['sp']),
             adkim: is_null($policy['adkim'] ?? null) ? null : AlignmentMode::from($policy['adkim']),
             aspf: is_null($policy['aspf'] ?? null) ? null : AlignmentMode::from($policy['aspf']),
         );

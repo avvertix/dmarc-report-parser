@@ -26,11 +26,17 @@ final class PolicyEvaluated
 
     public static function fromArray(array $policy): self
     {
+        $reasons = $policy['reason'] ?? [];
+
+        if ($reasons['type'] ?? false) {
+            $reasons = [$reasons];
+        }
+
         return new self(
             disposition: DispositionType::from($policy['disposition']),
             dkim: DmarcResultType::from($policy['dkim']),
             spf: DmarcResultType::from($policy['spf']),
-            reasons: array_map(fn ($item) => PolicyOverrideReason::fromArray($item), $policy['reason'] ?? []),
+            reasons: empty($reasons) ? [] : array_map(fn ($item) => PolicyOverrideReason::fromArray($item), $reasons),
         );
     }
 }

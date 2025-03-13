@@ -11,7 +11,7 @@ final class SpfAuthResult
 
         public readonly string $domain,
 
-        public readonly string $scope,
+        public readonly ?string $scope,
 
         public readonly SpfResult $result,
 
@@ -21,8 +21,8 @@ final class SpfAuthResult
     {
         return new self(
             domain: $result['domain'],
-            scope: $result['scope'],
             result: SpfResult::from($result['result']),
+            scope: $result['scope'] ?? null,
         );
     }
 }

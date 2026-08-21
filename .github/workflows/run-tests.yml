@@ -31,6 +31,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo, xsl, sodium
+          ini-values: error_reporting=E_ALL
           coverage: none
 
       - name: Setup problem matchers
@@ -43,6 +44,15 @@ jobs:
 
       - name: List Installed Dependencies
         run: composer show -D
+
+      - name: PHPStan
+        continue-on-error: true
+        run: vendor/bin/phpstan analyse
+
+      - name: Type Coverage
+        if: runner.os != 'Windows'
+        run: composer test:types
+        continue-on-error: true
 
       - name: Execute tests
         run: vendor/bin/pest --ci --no-coverage

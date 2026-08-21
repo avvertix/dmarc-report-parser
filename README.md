@@ -75,10 +75,6 @@ DMARC Report Parser is covered in unit test. The [PestPHP](https://pestphp.com/)
 composer test
 ```
 
-## Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
 ## Contributing
 
 Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.

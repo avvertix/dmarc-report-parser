@@ -7,7 +7,7 @@
 DMARC Report Parser is designed to simplify the analysis of [DMARC](https://dmarc.org/) (Domain-based Message Authentication, Reporting & Conformance) reports:
 
 - Parse the XML-based report into fully typed classes
-- Read reports from GZip files without decompressing first (coming soon)
+- Read reports from GZip files without decompressing first
 
 ## Installation
 

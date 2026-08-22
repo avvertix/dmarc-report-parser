@@ -34,11 +34,11 @@ final class DateRange
     public static function fromArray(array $range): self
     {
 
-        if (empty($range['begin'] ?? null)) {
+        if (empty($range['begin'] ?? null)) { // @phpstan-ignore nullCoalesce.offset
             throw new InvalidArgumentException('Missing begin timestamp.');
         }
 
-        if (empty($range['end'] ?? null)) {
+        if (empty($range['end'] ?? null)) { // @phpstan-ignore nullCoalesce.offset
             throw new InvalidArgumentException('Missing end timestamp.');
         }
 

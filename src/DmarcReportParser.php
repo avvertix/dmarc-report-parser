@@ -20,7 +20,7 @@ final class DmarcReportParser
      *
      * @var array
      */
-    private const SUPPORTED_MIME_TYPES = [
+    private const array SUPPORTED_MIME_TYPES = [
         'text/xml',
         'application/gzip',
         'application/zip',

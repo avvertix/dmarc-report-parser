@@ -7,7 +7,6 @@ use Avvertix\DmarcReportParser\Data\PolicyOverrideReason;
 use Avvertix\DmarcReportParser\Data\PolicyOverrideType;
 
 it('create from array', function () {
-
     $policy = PolicyEvaluated::fromArray([
         'disposition' => 'none',
         'dkim' => 'pass',
@@ -25,11 +24,9 @@ it('create from array', function () {
 
     expect($policy->disposition)
         ->toEqual(DispositionType::NONE);
-
 });
 
 it('handle reason', function () {
-
     $policy = PolicyEvaluated::fromArray([
         'disposition' => 'none',
         'dkim' => 'pass',
@@ -60,11 +57,9 @@ it('handle reason', function () {
     expect($policy->reasons[0])
         ->type->toEqual(PolicyOverrideType::MAILING_LIST)
         ->comment->toBeNull();
-
 });
 
 it('handle reason with comment', function () {
-
     $policy = PolicyEvaluated::fromArray([
         'disposition' => 'none',
         'dkim' => 'pass',
@@ -96,5 +91,4 @@ it('handle reason with comment', function () {
     expect($policy->reasons[0])
         ->type->toEqual(PolicyOverrideType::OTHER)
         ->comment->toEqual('a comment');
-
 });

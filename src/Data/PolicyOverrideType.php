@@ -49,5 +49,4 @@ enum PolicyOverrideType: string
      * PolicyOverrideReason's "comment" field.
      */
     case OTHER = 'other';
-
 }

@@ -4,7 +4,6 @@ use Avvertix\DmarcReportParser\Data\PolicyEvaluated;
 use Avvertix\DmarcReportParser\Data\Row;
 
 it('create from array', function () {
-
     $row = Row::fromArray([
         'source_ip' => '255.255.255.253',
         'count' => '1',

@@ -5,7 +5,6 @@ use Avvertix\DmarcReportParser\Data\DkimAuthResult;
 use Avvertix\DmarcReportParser\Data\SpfAuthResult;
 
 it('create from array', function () {
-
     $result = AuthResult::fromArray([
         'dkim' => [
             'domain' => 'a-domain.localhost',
@@ -29,11 +28,9 @@ it('create from array', function () {
     expect($result->spf)
         ->toHaveCount(1)
         ->toContainOnlyInstancesOf(SpfAuthResult::class);
-
 });
 
 it('handle multiple dkim and spf', function () {
-
     $result = AuthResult::fromArray([
         'dkim' => [
             [
@@ -71,11 +68,9 @@ it('handle multiple dkim and spf', function () {
     expect($result->spf)
         ->toHaveCount(2)
         ->toContainOnlyInstancesOf(SpfAuthResult::class);
-
 });
 
 it('create from array with only spf result', function () {
-
     $result = AuthResult::fromArray([
         'spf' => [
             'domain' => 'a-domain.localhost',
@@ -93,11 +88,9 @@ it('create from array with only spf result', function () {
     expect($result->spf)
         ->toHaveCount(1)
         ->toContainOnlyInstancesOf(SpfAuthResult::class);
-
 });
 
 it('handle dkim human result', function () {
-
     $result = AuthResult::fromArray([
         'dkim' => [
             'domain' => 'a-domain.localhost',
@@ -122,11 +115,9 @@ it('handle dkim human result', function () {
     expect($result->spf)
         ->toHaveCount(1)
         ->toContainOnlyInstancesOf(SpfAuthResult::class);
-
 });
 
 it('handle missing dkim selector', function () {
-
     $result = AuthResult::fromArray([
         'dkim' => [
             'domain' => 'a-domain.localhost',
@@ -149,5 +140,4 @@ it('handle missing dkim selector', function () {
     expect($result->spf)
         ->toHaveCount(1)
         ->toContainOnlyInstancesOf(SpfAuthResult::class);
-
 });

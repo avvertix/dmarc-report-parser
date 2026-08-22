@@ -23,7 +23,10 @@
     },
     "require-dev": {
         "laravel/pint": "^1.0",
-        "pestphp/pest": "^4.3",
+        "pestphp/pest": "^4.6||^5.0",
+        "pestphp/pest-plugin-type-coverage": "^4.0||^5.0",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.2",
         "symfony/var-dumper": "^7.4.0 || ^8.0.0"
     },
     "autoload": {
@@ -37,9 +40,29 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/pest --no-coverage",
+
+        "lint": [
+            "vendor/bin/pint --parallel"
+        ],
+        "lint:check": [
+            "vendor/bin/pint --parallel --test"
+        ],
+        "analyse": [
+            "vendor/bin/phpstan analyse"
+        ],
+        "test:types": [
+            "vendor/bin/pest --type-coverage --min=90"
+        ],
+        "test:unit": [
+            "vendor/bin/pest --no-coverage --parallel"
+        ],
         "test-coverage": "vendor/bin/pest --coverage",
-        "format": "vendor/bin/pint"
+        "test": [
+            "@analyse",
+            "@lint:check",
+            "@test:types",
+            "@test:unit"
+        ]
     },
     "config": {
         "sort-packages": true,

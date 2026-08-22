@@ -20,7 +20,7 @@ final class DmarcReportParser
      *
      * @var array
      */
-    private const SUPPORTED_MIME_TYPES = [
+    private const array SUPPORTED_MIME_TYPES = [
         'text/xml',
         'application/gzip',
         'application/zip',
@@ -41,17 +41,18 @@ final class DmarcReportParser
 
         if ($mimeType === 'application/zip') {
             $zip = new ZipArchive;
+
             if ($zip->open($path) === true) {
                 $content = $zip->getFromIndex(0);
                 $zip->close();
 
                 return $this->fromString($content);
             }
+
             throw new RuntimeException('Error reading zip file', 1);
         }
 
         if ($mimeType === 'application/gzip') {
-
             ob_start();
             $bytes = readgzfile($path);
             $content = ob_get_contents();
@@ -62,7 +63,6 @@ final class DmarcReportParser
             }
 
             return $this->fromString($content);
-
         }
 
         $reader = XmlReader::fromFile($path);

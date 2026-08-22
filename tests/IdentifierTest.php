@@ -3,7 +3,6 @@
 use Avvertix\DmarcReportParser\Data\Identifier;
 
 it('create from array', function () {
-
     $identifiers = Identifier::fromArray([
         'envelope_to' => 'other-domain.localhost',
         'envelope_from' => 'a-domain.localhost',
@@ -24,7 +23,6 @@ it('create from array', function () {
 });
 
 it('handle null envelope_to', function () {
-
     $identifiers = Identifier::fromArray([
         'envelope_from' => 'a-domain.localhost',
         'header_from' => 'a-domain.localhost',

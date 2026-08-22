@@ -5,7 +5,6 @@ use Avvertix\DmarcReportParser\Data\DispositionType;
 use Avvertix\DmarcReportParser\Data\Policy;
 
 it('create from array', function () {
-
     $policy = Policy::fromArray([
         'domain' => 'a-domain.localhost',
         'adkim' => 's',
@@ -42,7 +41,6 @@ it('create from array', function () {
 });
 
 it('handle null alignment modes', function () {
-
     $policy = Policy::fromArray([
         'domain' => 'a-domain.localhost',
         'p' => 'reject',

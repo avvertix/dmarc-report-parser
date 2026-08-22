@@ -6,7 +6,6 @@ use Avvertix\DmarcReportParser\Data\Record;
 use Avvertix\DmarcReportParser\Data\Row;
 
 it('create from array', function () {
-
     $record = Record::fromArray([
         'row' => [
             'source_ip' => '255.255.255.253',

@@ -23,7 +23,6 @@ final class AuthResult
 
     public static function fromArray(array $result): self
     {
-
         $dkimEntries = ! empty($result['dkim'] ?? null) ? (isset($result['dkim']['domain']) ? [$result['dkim']] : $result['dkim']) : [];
 
         $spfEntries = isset($result['spf']['domain']) ? [$result['spf']] : $result['spf'];

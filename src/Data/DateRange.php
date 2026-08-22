@@ -19,11 +19,9 @@ final class DateRange
         public readonly DateTimeImmutable $end,
 
     ) {
-
         if ($this->end < $this->begin) {
             throw new DateRangeError('Expecting end date to be after or equal begin date.');
         }
-
     }
 
     /**
@@ -33,7 +31,6 @@ final class DateRange
      */
     public static function fromArray(array $range): self
     {
-
         if (empty($range['begin'] ?? null)) { // @phpstan-ignore nullCoalesce.offset
             throw new InvalidArgumentException('Missing begin timestamp.');
         }

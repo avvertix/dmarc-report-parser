@@ -8,7 +8,6 @@ use Avvertix\DmarcReportParser\DmarcReportParser;
 use Avvertix\DmarcReportParser\Exception\UnsupportedFormatException;
 
 it('can parse xml file', function () {
-
     $dmarc = new DmarcReportParser;
 
     $report = $dmarc->fromFile('./tests/fixtures/dmarc.xml');
@@ -49,7 +48,6 @@ it('can parse xml file', function () {
 });
 
 it('can parse xml file with missing elements', function () {
-
     $dmarc = new DmarcReportParser;
 
     $report = $dmarc->fromFile('./tests/fixtures/dmarc-missing-elements.xml');
@@ -90,7 +88,6 @@ it('can parse xml file with missing elements', function () {
 });
 
 it('can parse zip file', function () {
-
     $dmarc = new DmarcReportParser;
 
     $report = $dmarc->fromFile('./tests/fixtures/dmarc.zip');
@@ -131,7 +128,6 @@ it('can parse zip file', function () {
 });
 
 it('can parse gzip file', function () {
-
     $dmarc = new DmarcReportParser;
 
     $report = $dmarc->fromFile('./tests/fixtures/dmarc.xml.gz');
@@ -172,7 +168,6 @@ it('can parse gzip file', function () {
 });
 
 it('can parse a xml file with txt extension', function () {
-
     $dmarc = new DmarcReportParser;
 
     $report = $dmarc->fromFile('./tests/fixtures/dmarc-as-txt.txt');
@@ -213,7 +208,6 @@ it('can parse a xml file with txt extension', function () {
 });
 
 it('can parse xml string', function () {
-
     $dmarc = new DmarcReportParser;
 
     $xml = <<<'DMARC'
@@ -335,7 +329,6 @@ it('can parse xml string', function () {
 });
 
 it('checks version', function () {
-
     $dmarc = new DmarcReportParser;
 
     $xml = <<<'DMARC'
@@ -364,13 +357,10 @@ it('checks version', function () {
     DMARC;
 
     $dmarc->fromString($xml);
-
 })->throws(InvalidArgumentException::class, 'Unexpected version identifier found. Expected 1.0, found [2.0]');
 
 it('refuse to parse a txt file', function () {
-
     $dmarc = new DmarcReportParser;
 
     $dmarc->fromFile('./tests/fixtures/plain.txt');
-
 })->throws(UnsupportedFormatException::class, 'Unsupported format [text/plain] for file [plain.txt]. Expecting xml, zip, gzip.');

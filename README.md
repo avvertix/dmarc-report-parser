@@ -33,7 +33,21 @@ $dmarc = new Avvertix\DmarcReportParser\DmarcReportParser();
  * @var Avvertix\DmarcReportParser\Data\DmarcReport
  */
 $report = $dmarc->fromFile('path/to/report.xml');
+```
 
+You can pass directly `zip` or `gzip` compressed reports. It is assumed that the XML report file is the first file in the compressed archive.
+
+When working with compressed reports we cap expansion at 10MB by default. An archive that expands past the cap 
+throws `Avvertix\DmarcReportParser\Exception\DecompressionLimitException`. If necessary you can adjust the 
+expansion limit by providing a `ParserConfiguration`.
+
+```php
+use Avvertix\DmarcReportParser\DmarcReportParser;
+use Avvertix\DmarcReportParser\ParserConfiguration;
+
+$dmarc = new DmarcReportParser(new ParserConfiguration(
+    maxDecompressedBytes: 2 * 1024 * 1024, // 2 MB
+));
 ```
 
 **from string**

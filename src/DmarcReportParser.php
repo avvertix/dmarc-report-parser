@@ -6,6 +6,7 @@ use Avvertix\DmarcReportParser\Data\DateRange;
 use Avvertix\DmarcReportParser\Data\DmarcReport;
 use Avvertix\DmarcReportParser\Data\Policy;
 use Avvertix\DmarcReportParser\Data\Record;
+use Avvertix\DmarcReportParser\Exception\DecompressionLimitException;
 use Avvertix\DmarcReportParser\Exception\UnsupportedFormatException;
 use InvalidArgumentException;
 use RuntimeException;
@@ -27,8 +28,29 @@ final class DmarcReportParser
     ];
 
     /**
+     * Size of a single read while decompressing
+     */
+    private const int READ_CHUNK_BYTES = 8192;
+
+    private readonly ParserConfiguration $configuration;
+
+    /**
+     * Instantiate a DmarcReportParser
+     */
+    public function __construct(?ParserConfiguration $configuration = null)
+    {
+        $this->configuration = $configuration ?? new ParserConfiguration;
+    }
+
+    /**
      * Parse a DMARC report from file.
-     * File must be readable in xml format or compressed archives (zip, gz) containing only one xml file
+     * File must be readable in xml format or compressed archives (zip, gz) containing only one xml file.
+     *
+     * A zip holding more than one entry is not rejected: the first entry is read and the rest ignored.
+     * Decompression stops as soon as the expansion passes the configured cap.
+     *
+     * @throws DecompressionLimitException when the file expands beyond the configured cap
+     * @throws UnsupportedFormatException when the file is not xml, zip or gzip
      */
     public function fromFile(string $path): DmarcReport
     {
@@ -43,8 +65,20 @@ final class DmarcReportParser
             $zip = new ZipArchive;
 
             if ($zip->open($path) === true) {
-                $content = $zip->getFromIndex(0);
-                $zip->close();
+                $stream = $zip->getStreamIndex(0);
+
+                if ($stream === false) {
+                    $zip->close();
+
+                    throw new RuntimeException('Error reading zip file', 1);
+                }
+
+                try {
+                    $content = $this->readWithinCap($stream, basename($path));
+                } finally {
+                    fclose($stream);
+                    $zip->close();
+                }
 
                 return $this->fromString($content);
             }
@@ -53,13 +87,16 @@ final class DmarcReportParser
         }
 
         if ($mimeType === 'application/gzip') {
-            ob_start();
-            $bytes = readgzfile($path);
-            $content = ob_get_contents();
-            ob_end_clean();
+            $handle = gzopen($path, 'rb');
 
-            if ($bytes === false) {
+            if ($handle === false) {
                 throw new RuntimeException('Error reading gzip file', 1);
+            }
+
+            try {
+                $content = $this->readWithinCap($handle, basename($path));
+            } finally {
+                gzclose($handle);
             }
 
             return $this->fromString($content);
@@ -78,6 +115,43 @@ final class DmarcReportParser
         $reader = XmlReader::fromString($xml);
 
         return $this->parseXmlReport($reader);
+    }
+
+    /**
+     * Read a decompression stream, stopping as soon as the expansion exceeds the cap.
+     *
+     * The count is kept while reading rather than taken from the archive: both gzip's
+     * trailing ISIZE and the zip central directory are written by whoever built the
+     * file and can claim anything.
+     *
+     * @param  resource  $stream
+     *
+     * @throws DecompressionLimitException
+     */
+    private function readWithinCap($stream, string $fileName): string
+    {
+        $maximum = $this->configuration->maxDecompressedBytes;
+
+        $content = '';
+        $read = 0;
+
+        while (! feof($stream)) {
+            $chunk = fread($stream, self::READ_CHUNK_BYTES);
+
+            if ($chunk === false) {
+                throw new RuntimeException("Error reading file [{$fileName}]", 1);
+            }
+
+            $read += strlen($chunk);
+
+            if ($read > $maximum) {
+                throw new DecompressionLimitException($fileName, $maximum);
+            }
+
+            $content .= $chunk;
+        }
+
+        return $content;
     }
 
     private function parseXmlReport(XmlReader $reader): DmarcReport

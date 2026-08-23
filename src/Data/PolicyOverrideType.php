@@ -13,14 +13,27 @@ enum PolicyOverrideType: string
      * The message was relayed via a known forwarder, or local
      * heuristics identified the message as likely having been forwarded.
      * There is no expectation that authentication would pass.
+     *
+     * Removed by RFC 9990. Retained because RFC 7489-era reports still use it.
      */
     case FORWARDED = 'forwarded';
 
     /**
      * The message was exempted from application of policy by
      * the "pct" setting in the DMARC policy record.
+     *
+     * Removed by RFC 9990 along with the "pct" tag. Retained because
+     * RFC 7489-era reports still use it.
      */
     case SAMPLED_OUT = 'sampled_out';
+
+    /**
+     * The message was exempted from application of policy by the testing
+     * mode ("t" tag) in the DMARC Policy Record.
+     *
+     * @see RFC 9990, Section 3.1.6
+     */
+    case POLICY_TEST_MODE = 'policy_test_mode';
 
     /**
      * Message authentication failure was anticipated by
@@ -49,4 +62,21 @@ enum PolicyOverrideType: string
      * PolicyOverrideReason's "comment" field.
      */
     case OTHER = 'other';
+
+    /**
+     * A type this parser does not recognise.
+     *
+     * Not defined by any RFC. The list of override types changed between
+     * RFC 7489 and RFC 9990 and may change again, so an unrecognised value is
+     * normalised here instead of failing the report.
+     */
+    case UNKNOWN = 'unknown';
+
+    /**
+     * Resolve a reported override type, falling back to UNKNOWN.
+     */
+    public static function fromReport(string $type): self
+    {
+        return self::tryFrom($type) ?? self::UNKNOWN;
+    }
 }

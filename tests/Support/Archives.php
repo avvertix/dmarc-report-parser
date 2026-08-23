@@ -37,6 +37,37 @@ final class Archives
     }
 
     /**
+     * Write $source into a gzip archive
+     */
+    public static function gzipOf(string $source, string $name): string
+    {
+        $path = self::path($name);
+
+        file_put_contents($path, gzencode((string) file_get_contents($source)));
+
+        return $path;
+    }
+
+    /**
+     * Write $source into a zip archive as its only entry
+     */
+    public static function zipOf(string $source, string $name): string
+    {
+        $path = self::path($name);
+
+        $zip = new ZipArchive;
+
+        if ($zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            throw new RuntimeException("Unable to write the zip fixture [{$path}].");
+        }
+
+        $zip->addFile($source, basename($source));
+        $zip->close();
+
+        return $path;
+    }
+
+    /**
      * Write a zip archive holding a single entry that expands to $expandedBytes
      */
     public static function zip(string $name, int $expandedBytes, string $entryName = 'report.xml'): string

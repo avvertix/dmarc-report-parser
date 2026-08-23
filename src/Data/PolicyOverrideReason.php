@@ -18,7 +18,7 @@ final class PolicyOverrideReason
     public static function fromArray(array $policy): self
     {
         return new self(
-            type: PolicyOverrideType::from($policy['type']),
+            type: PolicyOverrideType::fromReport($policy['type']),
             comment: $policy['comment'] ?? null,
         );
     }

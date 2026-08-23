@@ -25,7 +25,9 @@ final class AuthResult
     {
         $dkimEntries = ! empty($result['dkim'] ?? null) ? (isset($result['dkim']['domain']) ? [$result['dkim']] : $result['dkim']) : [];
 
-        $spfEntries = isset($result['spf']['domain']) ? [$result['spf']] : $result['spf'];
+        // RFC 9990 Section 3.1.1.11 makes spf optional, where RFC 7489 required
+        // exactly one, so auth_results may carry no spf element at all.
+        $spfEntries = ! empty($result['spf'] ?? null) ? (isset($result['spf']['domain']) ? [$result['spf']] : $result['spf']) : [];
 
         return new self(
             dkim: array_map(fn ($item) => DkimAuthResult::fromArray($item), $dkimEntries),

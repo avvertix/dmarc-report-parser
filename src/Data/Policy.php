@@ -44,6 +44,34 @@ final class Policy
          * Failure reporting options in effect.
          */
         public readonly ?string $fo,
+
+        /**
+         * The method used to discover the DMARC Policy Record used during evaluation.
+         *
+         * Null for RFC 7489-era reports, which do not carry this element.
+         *
+         * @see RFC 9990, Section 3.1.1.5
+         */
+        public readonly ?DiscoveryMethod $discovery_method = null,
+
+        /**
+         * Whether testing mode was declared in the DMARC Record, the "t" tag.
+         *
+         * Null for RFC 7489-era reports, which do not carry this element. That
+         * is not the same as TestingMode::NO.
+         *
+         * @see RFC 9990, Section 3.1.1.5
+         */
+        public readonly ?TestingMode $testing = null,
+
+        /**
+         * The policy to apply to messages from non-existent subdomains.
+         *
+         * Null for RFC 7489-era reports, which do not carry this element.
+         *
+         * @see RFC 9990, Section 3.1.1.5
+         */
+        public readonly ?DispositionType $np = null,
     ) {}
 
     public static function fromArray(array $policy): self
@@ -56,6 +84,9 @@ final class Policy
             sp: empty($policy['sp'] ?? null) ? null : DispositionType::from($policy['sp']),
             adkim: is_null($policy['adkim'] ?? null) ? null : AlignmentMode::from($policy['adkim']),
             aspf: is_null($policy['aspf'] ?? null) ? null : AlignmentMode::from($policy['aspf']),
+            discovery_method: is_null($policy['discovery_method'] ?? null) ? null : DiscoveryMethod::fromReport($policy['discovery_method']),
+            testing: is_null($policy['testing'] ?? null) ? null : TestingMode::fromReport($policy['testing']),
+            np: empty($policy['np'] ?? null) ? null : DispositionType::from($policy['np']),
         );
     }
 }

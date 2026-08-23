@@ -70,5 +70,23 @@ final class DmarcReport
          */
         public readonly ?string $error = null,
 
+        /**
+         * The name and version of the software that generated the report.
+         *
+         * Null for RFC 7489-era reports, which do not carry this element.
+         *
+         * @see RFC 9990, Section 3.1.1.3
+         */
+        public readonly ?string $generator = null,
+
+        /**
+         * File level extension elements, empty when the report carries none.
+         *
+         * @see RFC 9990, Section 3.1.1.6
+         *
+         * @var list<Extension>
+         */
+        public readonly array $extensions = [],
+
     ) {}
 }

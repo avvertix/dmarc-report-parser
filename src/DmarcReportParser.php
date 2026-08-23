@@ -4,6 +4,7 @@ namespace Avvertix\DmarcReportParser;
 
 use Avvertix\DmarcReportParser\Data\DateRange;
 use Avvertix\DmarcReportParser\Data\DmarcReport;
+use Avvertix\DmarcReportParser\Data\Extension;
 use Avvertix\DmarcReportParser\Data\Policy;
 use Avvertix\DmarcReportParser\Data\Record;
 use Avvertix\DmarcReportParser\Exception\DecompressionLimitException;
@@ -164,7 +165,9 @@ final class DmarcReportParser
 
         $metadata = $reader->value('feedback.report_metadata')->sole();
 
-        $records = array_map(fn ($item) => Record::fromArray($item), $reader->value('feedback.record')->get());
+        $namespaces = $this->namespaceDeclarations($reader);
+
+        $records = array_map(fn ($item) => Record::fromArray($item, $namespaces), $reader->value('feedback.record')->get());
 
         return new DmarcReport(
             version: $version,
@@ -180,7 +183,31 @@ final class DmarcReportParser
 
             extra_contact_info: $metadata['extra_contact_info'] ?? null,
             error: $metadata['error'] ?? null,
+            generator: $metadata['generator'] ?? null,
+            extensions: Extension::listFromArray($reader->value('feedback.extension')->first() ?? [], $namespaces),
 
+        );
+    }
+
+    /**
+     * The namespace declarations in scope on the report, as attribute name to URI.
+     *
+     * Extension elements are namespaced and carry only their prefix in the
+     * element name, so the declarations are needed to resolve a prefix back to
+     * the URI identifying the extension.
+     *
+     * @see RFC 9990, Section 5
+     *
+     * @return array<string, string>
+     */
+    private function namespaceDeclarations(XmlReader $reader): array
+    {
+        $root = $reader->element('feedback')->first();
+
+        return $root === null ? [] : array_filter(
+            $root->getAttributes(),
+            fn (string $name) => str_starts_with($name, 'xmlns'),
+            ARRAY_FILTER_USE_KEY,
         );
     }
 }

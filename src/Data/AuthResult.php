@@ -11,11 +11,13 @@ final class AuthResult
 
         /**
          * DKIM results
+         * @var list<DkimAuthResult> $dkim
          */
         public readonly array $dkim,
 
         /**
-         * SPF results.
+         * SPF results
+         * @var list<SpfAuthResult> $spf
          */
         public readonly array $spf,
 

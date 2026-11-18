@@ -52,7 +52,7 @@ final class DmarcReport
         /**
          * The evaluated records
          *
-         * @var List<Record>
+         * @var list<Record>
          */
         public readonly array $records,
 

@@ -108,7 +108,7 @@ foreach ($report->records as $record) {
         $dkim->human_result;        // 'signature verified', or null
     }
 
-    // Zero or one SPF result. The array is empty when the report carries none
+    // SPF results. The array is empty when the report carries none
     foreach ($record->auth_results->spf as $spf) {
         $spf->domain;               // 'a-domain.localhost'
         $spf->scope;                // 'mfrom', or null
